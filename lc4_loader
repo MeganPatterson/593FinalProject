@@ -1,0 +1,216 @@
+/************************************************************************/
+/* File Name : lc4_loader.c		 										*/
+/* Purpose   : This file implements the loader (ld) from PennSim		*/
+/*             It will be called by main()								*/
+/*             															*/
+/* Author(s) : tjf					*/
+/************************************************************************/
+
+#include <stdio.h>
+#include "lc4_memory.h"
+#include <stdlib.h>
+#include <string.h>
+
+/* declarations of functions that must defined in lc4_loader.c */
+
+FILE* open_file(char* file_name) {//WRITTEN BY VANESSA LYON
+	FILE *theFile_to_read = fopen (file_name, "rb"); //open the file in read binary mode
+    
+    //ERROR checking is done in lc4.c
+    
+    return theFile_to_read;
+}
+
+int parse_file (FILE* my_obj_file, row_of_memory** memory) {//WRITTEN BY VANESSA LYON
+    // variables of what to store for ever instruction    
+    short unsigned int memory_content;
+    short unsigned int memory_address;
+    short unsigned int number_words;
+    
+    // variables to store the bytes to read; 2 of them to manage endianess
+    int byte_to_read1; 
+    int byte_to_read2;
+    int byte_to_read3; 
+    int byte_to_read4;
+    
+    int old_byte1;
+    int old_byte2;
+    
+    int number_letters_in_labels = 0;
+    
+    int i;
+    
+    int add_to_list_counter =0;
+    int return_add_list =0;
+        
+    while (1){
+        
+    memory_content = 0;
+    memory_address = 0;
+    number_words = 0;
+    i = 0;
+        
+        /*
+         * Read Header Field - Endianess order
+         * */
+        
+        byte_to_read1 = fgetc(my_obj_file);
+        if (byte_to_read1 == EOF){break;}
+        byte_to_read2 = fgetc(my_obj_file);
+        if (byte_to_read2 == EOF){break;}
+     
+         memory_content = byte_to_read1 * 2*2*2*2*2*2*2*2 + byte_to_read2;  
+        /*
+         * Read Address Field - Endianess order
+         * */
+   
+        byte_to_read1 = fgetc(my_obj_file);
+        if (byte_to_read1 == EOF){break;}
+        byte_to_read2 = fgetc(my_obj_file);
+        if (byte_to_read2 == EOF){break;}
+        
+        memory_address = byte_to_read1 * 2*2*2*2*2*2*2*2 + byte_to_read2;
+           
+        /*
+        * Read Number of Words - Endianess order
+        * */
+     
+        byte_to_read1 = fgetc(my_obj_file);
+        if (byte_to_read1 == EOF){break;}
+        byte_to_read2 = fgetc(my_obj_file);
+        if (byte_to_read2 == EOF){break;}
+        
+        number_words = byte_to_read1 * 2*2*2*2*2*2*2*2 + byte_to_read2;   
+    
+        /*
+         * if Header is CADE (51934) or DADA (56026), read number_words of words
+         * */
+    
+        if ((memory_content == 51934)||(memory_content == 56026)){
+            
+            
+            if (add_to_list_counter ==0){ //Initialize first node head, in case it is the first time
+                (*memory)->address = memory_address;
+                (*memory)->label = NULL;
+                (*memory)->contents = memory_content;
+                (*memory)->assembly = NULL;
+                (*memory)->next = NULL;
+                add_to_list_counter = add_to_list_counter +1;
+            }
+        
+            // ADD to list
+            return_add_list = add_to_list (memory, memory_address, memory_content); 
+        
+            add_to_list_counter   = add_to_list_counter + 1;
+            if (return_add_list !=0){ // Error message
+                printf("error4: Error happened in adding list\n");  
+                return 66;
+                }      
+        
+           int n = number_words;
+           int address = memory_address;
+        
+           while (n>0){// Now we compute the n instructions or data of 16 bits (2 * 8 bytes)
+           
+               byte_to_read1 = fgetc(my_obj_file);
+               if (byte_to_read1 == EOF){break;}
+               byte_to_read2 = fgetc(my_obj_file);
+               if (byte_to_read2 == EOF){break;}
+           
+               memory_content = byte_to_read1 * 2*2*2*2*2*2*2*2 + byte_to_read2;
+           
+               // Positions content at address
+               return_add_list = add_to_list (memory, address, memory_content);  
+               add_to_list_counter = add_to_list_counter + 1; 
+           
+               if (return_add_list !=0){
+                    printf("error4: Error happened in adding list\n");  
+                    return 66;
+                    } 
+           
+               //Increment address to next address
+               address++;
+           
+               n--;
+           } 
+        
+        }
+        
+     /*
+     * if Header is C3B7 (50103)
+     * */
+        
+    else if (memory_content == 50103) {
+        
+        if (add_to_list_counter ==0){ //Initialize first node head, in case it is the first time
+                (*memory)->address = memory_address;
+                (*memory)->label = NULL;
+                (*memory)->contents = memory_content;
+                (*memory)->assembly = NULL;
+                (*memory)->next = NULL;
+            add_to_list_counter = add_to_list_counter +1;
+            }
+        
+        
+        char* label; // label string 
+        int label_size = (number_words +1 ); //make size for null termination
+        int label_value = 0; //initialize equivalent integer value of a char
+        
+        label = malloc (label_size * sizeof(char)); //make space for label
+        if (label == NULL) { // check malloc went OK
+                printf("error2: could not allocate first memory space \n");
+                return 2;
+             }
+        
+        char* beginning_label = label; //points at beginning of label string
+        
+        number_letters_in_labels = number_letters_in_labels + number_words; // count cumulated number of letters in labels to identify when there is a flip
+        
+        while (label_size >1){ //Read each character
+             
+            byte_to_read1 = fgetc(my_obj_file);
+            if (byte_to_read1 == EOF){break;}
+          
+           label_value = byte_to_read1;    
+           *label= (char) label_value;
+           label ++;
+           label_size--;
+           }
+       
+        *label = '\0'; //null terminate string 
+        label = beginning_label;
+       
+        row_of_memory* result = search_address (*memory, memory_address); //search for address to put in label
+       
+        if (result != NULL){// If node already exists, 
+            (result)->label = malloc(strlen(label)+1); //make space for string
+            
+            
+            strcpy((result)->label,label); //place label string in the space defined in the node
+            }
+        
+        else { //If node does not exist , add it to list, with no content (0) at this point
+            return_add_list = add_to_list (memory, memory_address, 0); 
+            add_to_list_counter= add_to_list_counter + 1;  
+          
+            result = search_address (*memory, memory_address); //now we have a result
+            
+            if (result != NULL){// we can incorporate label in the node that we created
+                (result)->label = malloc(strlen(label)+1);
+                
+                strcpy((result)->label,label);
+                 }
+        }
+ 
+       free (label); // release space
+    
+      }
+        
+      else { //Track in case header is wrong and abort
+            printf("error5: Wrong header format of obj file\n"); 
+            return 5;
+      }    
+    }
+    
+	return 0 ;
+}
