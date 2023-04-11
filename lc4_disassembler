@@ -1,0 +1,212 @@
+/************************************************************************/
+/* File Name : lc4_disassembler.c 										*/
+/* Purpose   : This file implements the reverse assembler 				*/
+/*             for LC4 assembly.  It will be called by main()			*/
+/*             															*/
+/* Author(s) : tjf and you												*/
+/************************************************************************/
+
+#include <stdio.h>
+#include "lc4_memory.h"
+#include <stdlib.h>
+#include <string.h>
+
+int* convert (short unsigned int contents){
+    
+    // NEED TO CHECK FOR THE NULL AND CORNER CASES
+    
+    int* binary_instruction= malloc (16 * sizeof(int)) ;// to be declared on the heap through malloc
+  
+    int number = contents;
+    
+    int i = 0;
+    while (i<16){
+        binary_instruction[i]= number % 2;
+        number = number /2;
+       i++; 
+    }
+    
+
+return binary_instruction;
+}
+
+int reverse_assemble (row_of_memory* memory){
+    
+    // Case opcode == 1 (arithmetic instructions ADD)   other cases to be done for Extra credit
+    int opcode = 1;
+    
+    row_of_memory* ptr = search_opcode(memory,opcode);
+     
+    if (ptr == NULL) {return 1;}
+ 
+    while (ptr !=NULL){
+ 
+    char* initial = malloc (8* sizeof(char)); 
+    char* final_string = malloc (30* sizeof(char)); 
+
+    // Subcases in arithmetic - ADD, MUL, DIV, ADD IMM    
+    
+    short unsigned int cont = ptr -> contents;
+    int* instruction =  convert (cont);
+    int subopcode = -1;
+
+
+    initial [0]=' ';
+    initial [1]='R';
+    initial [2]= 48 + (instruction[11]*2*2 + instruction[10]*2 + instruction[9]); //RD
+    initial [3]=' ';
+    initial [4]='R';
+    initial [5]= 48 + (instruction[8]*2*2 + instruction[7]*2 + instruction[6]); //RS
+    initial [6]=' ';
+    initial [7]='\0';    
+        
+        
+    if (instruction[5] == 1){// Case of ADD Immediate
+        
+        char* word = malloc (4* sizeof(char));
+        char * immediate_instruction = malloc (3*sizeof(char));
+        
+       
+       int number = 0;
+       number = instruction [4]*2*2*2*2 +  instruction [3]*2*2*2+ instruction [2]*2*2+ instruction [1]*2+ instruction [0];
+       
+       char* beginning = number_in_char;
+       int positive_number = -1;
+       
+        if (number <0) {positive_number = -number;}
+       else {positive_number = number;}
+        
+       if (number <10) {
+           char* number_in_char = malloc (2*sizeof(char));
+           *number_in_char = 48 + positive_number;
+           number_in_char++;
+           *number_in_char = '\0';
+           number_in_char = beginning;
+       }
+       else {
+           char* number_in_char = malloc (3*sizeof(char));
+           *number_in_char = 49;
+           number_in_char++;
+           *number_in_char = 48 + (positive_number -10);
+           number_in_char++;
+           *number_in_char = '\0';          
+           number_in_char = beginning;
+       }
+       
+       
+       beginning = immediate_instruction;
+        
+       *immediate_instruction ='#';
+        immediate_instruction++;
+       if (number <0){*immediate_instruction= '-';}
+       else {*immediate_instruction= ' ';}  
+        immediate_instruction++;
+       *immediate_instruction='\0';
+        immediate_instruction = beginning;
+        
+        char* start = malloc ((strlen (immediate_instruction) + strlen(number_in_char))*sizeof(char));
+       
+        start = strcat (immediate_instruction, number_in_char);
+        
+        word[0] ='A';
+        word[1] ='D';
+        word[2] = 'D';
+        word[3]= '\0';
+        
+        string = strcat (word, string);
+        string = strcat (string, immediate_instruction);
+        strcpy (final_string, string);
+        
+        free (word);
+        free(immediate_instruction);
+        free(number_in_char);
+        
+    }    
+        
+    else {           
+        subopcode = instruction[5]*2*2 + instruction[4]*2 + instruction [3];  
+        
+        char * RT = malloc (3*sizeof(char));
+        RT [0]='R';
+        RT [1]= 48 + (instruction[2]*2*2 + instruction[1]*2 + instruction[0]); //RT
+        RT [2]='\0';
+        
+        string = strcat(string, RT);
+        strcpy(final_string, string);
+        
+        free (RT);
+        
+        if (subopcode == 0){
+            
+            char* word = malloc (4* sizeof(char));
+            word[0] ='A';
+            word[1] ='D';
+            word[2] = 'D';
+            word[3]= '\0';
+            
+            final_string = strcat(word, final_string);
+            strcpy(string, final_string);
+            free (word);
+           
+        }
+        else if (subopcode == 1){
+            char* word = malloc (4* sizeof(char));
+            word[0] ='M';
+            word[1] ='U';
+            word[2] = 'L';
+            word[3]= '\0';
+            
+             final_string = strcat(word, final_string);
+            strcpy(string, final_string);
+            free (word);
+        }
+        else if (subopcode == 2){
+            char* word = malloc (4* sizeof(char));
+            
+            word[0] ='S';
+            word[1] ='U';
+            word[2] = 'B';
+            word[3]= '\0';
+            
+             final_string = strcat(word, final_string);
+            strcpy(string, final_string);
+            free(word);
+        }      
+        else if (subopcode == 3){
+            char* word = malloc (4* sizeof(char));
+            word[0] ='D';
+            word[1] ='I';
+            word[2] = 'V';
+            word[3]= '\0';
+            
+            final_string = strcat(word, final_string);
+            strcpy(string, final_string);
+            free (word);
+        }
+    
+        else {
+            printf ("Error in subopcode syntax\n");
+            return 1;
+        }  
+        
+    
+        (ptr)-> assembly = malloc(strlen(string)+1); //make space for string
+         strcpy((ptr)->assembly, string); //place string in the space defined in the node for assembly  
+        
+        printf("in assembly we have %s\n", (ptr)->assembly);
+        
+    }
+        free (string);
+        
+        free (instruction); 
+        if ((ptr)->next == NULL){break;}
+        else {ptr = search_opcode ((ptr)->next, 1);}
+        
+    }
+   
+    return 0;
+    
+    
+}
+
+
