@@ -14,7 +14,7 @@
 /*
  * adds a new node to a linked list pointed to by head
  */
-int add_to_list (row_of_memory** head, short unsigned int address, short unsigned int contents) {//WRITTEN BY VANESSA LYON
+int add_to_list (row_of_memory** head, short unsigned int address, short unsigned int contents) {
     
     row_of_memory** beginning = head;
     row_of_memory** place_searcher = NULL;
@@ -96,7 +96,7 @@ int add_to_list (row_of_memory** head, short unsigned int address, short unsigne
 /*
  * search linked list by address field, returns node if found
  */
-row_of_memory* search_address (row_of_memory* head, short unsigned int address ) { //WRITTEN BY VANESSA LYON
+row_of_memory* search_address (row_of_memory* head, short unsigned int address ) { 
 	
     /* traverse linked list, searching each node for "address"  */
 
@@ -134,7 +134,7 @@ row_of_memory* search_address (row_of_memory* head, short unsigned int address )
 /*
  * search linked list by opcode field, returns node if found
  */
-row_of_memory* search_opcode  (row_of_memory* head, short unsigned int opcode ) {//WRITTEN BY MEG PATTERSON
+row_of_memory* search_opcode  (row_of_memory* head, short unsigned int opcode ) {
     /* opcode parameter is in the least significant 4 bits of the short int and ranges from 0-15 */
     
     /* traverse linked list until node is found with matching opcode
@@ -165,7 +165,7 @@ row_of_memory* search_opcode  (row_of_memory* head, short unsigned int opcode ) 
 }
 
 
-void print_list (row_of_memory* head ){//WRITTEN BY VANESSA LYON
+void print_list (row_of_memory* head ){
 	
     /* make sure head isn't NULL */
     if (head == NULL){
@@ -201,7 +201,7 @@ void print_list (row_of_memory* head ){//WRITTEN BY VANESSA LYON
 /*
  * delete entire linked list
  */
-int delete_list (row_of_memory** head ) {//WRITTEN BY VANESSA LYON
+int delete_list (row_of_memory** head ) {
     
 	row_of_memory** beginning = head;
     row_of_memory** tracker = head;
