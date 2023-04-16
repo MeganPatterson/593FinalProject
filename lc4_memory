@@ -81,40 +81,27 @@ int add_to_list(row_of_memory** head, short unsigned int address, short unsigned
  * search linked list by address field, returns node if found
  */
 row_of_memory* search_address (row_of_memory* head, short unsigned int address ) { 
-	
+    
     /* traverse linked list, searching each node for "address"  */
 
-	/* return pointer to node in the list if item is found */
+    /* return pointer to node in the list if item is found */
 
-	/* return NULL if list is empty or if "address" isn't found */
- 
-    row_of_memory** beginning = &head;
-    
+    /* return NULL if list is empty or if "address" isn't found */
+
     row_of_memory* pointer = NULL;
-    
-    while ( (beginning!= NULL)||(*beginning !=NULL) ){
-        
-        if ((*beginning)->address == address){
-            pointer = *beginning;
-            
-            return (pointer);
-        }
-        
-        row_of_memory* after = (*beginning)->next;
-        
-        if (after == NULL){ 
-            
-            pointer = NULL; 
-            return (pointer);}
-        
-        else {beginning = &after;}   
-         
-    }
- 
- return(pointer);
 
+    while (head != NULL) {
+        if (head->address == address) {
+            pointer = head;
+            break;
+        }
+        head = head->next;
+    }
+
+    return pointer;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
  * search linked list by opcode field, returns node if found
  */
@@ -148,7 +135,7 @@ row_of_memory* search_opcode  (row_of_memory* head, short unsigned int opcode ) 
 	return ptr ;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////
 void print_list (row_of_memory* head ){
 	
     /* make sure head isn't NULL */
