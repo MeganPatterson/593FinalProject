@@ -14,10 +14,7 @@
 /* declarations of functions that must defined in lc4_loader.c */
 
 FILE* open_file(char* file_name) {
-	FILE *theFile_to_read = fopen (file_name, "rb"); //open the file in read binary mode
-    
-    //ERROR checking is done in lc4.c
-    
+    FILE *theFile_to_read = fopen(file_name, "rb");
     return theFile_to_read;
 }
 
