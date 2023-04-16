@@ -11,23 +11,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-int* convert (short unsigned int contents){
-    
-    // NEED TO CHECK FOR THE NULL AND CORNER CASES
-    
-    int* binary_instruction= malloc (16 * sizeof(int)) ;// to be declared on the heap through malloc
-  
-    int number = contents;
-    
-    int i = 0;
-    while (i<16){
-        binary_instruction[i]= number % 2;
-        number = number /2;
-       i++; 
+int* convert(short unsigned int contents) {
+    // Check if the input is valid
+    if (contents < 0) {
+        return NULL;
     }
-    
 
-return binary_instruction;
+    int* binary_instruction = malloc(16 * sizeof(int)); // to be declared on the heap through malloc
+
+    int number = contents;
+
+    int i = 0;
+    while (i < 16) {
+        binary_instruction[i] = number % 2;
+        number = number / 2;
+        i++;
+    }
+
+    return binary_instruction;
 }
 
 int reverse_assemble (row_of_memory* memory){
