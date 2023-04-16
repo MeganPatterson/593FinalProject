@@ -13,7 +13,7 @@
 
 /* declarations of functions that must defined in lc4_loader.c */
 
-FILE* open_file(char* file_name) {//WRITTEN BY VANESSA LYON
+FILE* open_file(char* file_name) {
 	FILE *theFile_to_read = fopen (file_name, "rb"); //open the file in read binary mode
     
     //ERROR checking is done in lc4.c
@@ -21,7 +21,7 @@ FILE* open_file(char* file_name) {//WRITTEN BY VANESSA LYON
     return theFile_to_read;
 }
 
-int parse_file (FILE* my_obj_file, row_of_memory** memory) {//WRITTEN BY VANESSA LYON
+int parse_file (FILE* my_obj_file, row_of_memory** memory) {
     // variables of what to store for ever instruction    
     short unsigned int memory_content;
     short unsigned int memory_address;
