@@ -14,85 +14,69 @@
 /*
  * adds a new node to a linked list pointed to by head
  */
-int add_to_list (row_of_memory** head, short unsigned int address, short unsigned int contents) {
+int add_to_list(row_of_memory** head, short unsigned int address, short unsigned int contents) {
     
-    row_of_memory** beginning = head;
-    row_of_memory** place_searcher = NULL;
+    row_of_memory** place_searcher = head; // Renamed "beginning" to "place_searcher"
     
     /* check to see if there is already an entry for this address and update the contents, if so */
     
-    /* allocate memory for a single node */
-
-	/* populate fields in newly allocated node w/ address&contents */
-    
     row_of_memory* pointer = NULL;
     
-    if ((head != NULL) && (*head != NULL)){
-        pointer = search_address (*head, address); // Use next procedure
-        }
+    if (head != NULL && *head != NULL) {
+        pointer = search_address(*head, address);
+    }
     
-    if (pointer != NULL){
-        pointer -> contents = contents;}
+    if (pointer != NULL) {
+        pointer->contents = contents;
+        return 0; // If address was found, return success immediately
+    }
     
-    else {// Case we did not find matching address
-        
-        row_of_memory* new_node = malloc (sizeof(row_of_memory)); 
-        
-        if (new_node == NULL) {
-            printf("error-1: could not allocate memory space \n");
-            return -1;} 
+    /* allocate memory for a single node */
     
-        new_node -> address = address;
-        new_node -> label = NULL;
-        new_node -> contents = contents;
-        new_node -> assembly = NULL;
-        new_node -> next = NULL;
+    row_of_memory* new_node = malloc(sizeof(row_of_memory)); 
+    
+    if (new_node == NULL) {
+        printf("error-1: could not allocate memory space \n");
+        return -1;
+    } 
+    
+    /* populate fields in newly allocated node with address and contents */
+    
+    new_node->address = address;
+    new_node->label = NULL;
+    new_node->contents = contents;
+    new_node->assembly = NULL;
+    new_node->next = NULL;
       
     /* if head==NULL, node created is the new head of the list! */
     
-    if (head == NULL){
-        *head = new_node;}
+    if (head == NULL || *head == NULL) { // Simplified condition
+        *head = new_node;
+        return 0;
+    }
     
     /* otherwise, insert node into the list in address ascending order */
+    
+    row_of_memory* follower = *head;
+    row_of_memory* predecessor = NULL;
+    
+    while (follower != NULL && address > follower->address) {
+        predecessor = follower;
+        follower = follower->next;
+    }
+    
+    if (predecessor == NULL) { // If new node is at the beginning of the list
+        new_node->next = *head;
+        *head = new_node; 
+    }
     else {
-        
-        row_of_memory* follower = NULL; 
-        row_of_memory* predecessor = NULL;
-        
-        
-        if (address < (*head)->address){//If smaller address, we put new node at the beginning
-            new_node-> next = *head;
-            *head = new_node; 
-            }
-        
-        else{
-        
-        place_searcher = head;
-        
-        while (address > ((*place_searcher)->address)){
-            predecessor = *place_searcher;
-                
-            follower =(*place_searcher)->next;  
-                        
-            if (follower == NULL){break;}  
-            else {place_searcher = &follower;}   
-        }
-             
-        if (follower == NULL){predecessor -> next = new_node;}
-        
-        else {
-            predecessor -> next = new_node;
-            new_node -> next = *place_searcher;}
-    }
-        
-    }
+        predecessor->next = new_node;
+        new_node->next = follower;
     }
       
-	/* return 0 for success, -1 if malloc fails */
-    return 0 ;
-    
+    /* return 0 for success, -1 if malloc fails */
+    return 0;
 }
-
 /*
  * search linked list by address field, returns node if found
  */
