@@ -48,24 +48,13 @@ int reverse_assemble (row_of_memory* memory)
 					rs = ((curr_contents >> 6) & 0x7);
 					rt = (curr_contents & 0x7);
 					last5 = (curr_contents & 0x1F);
-					printf("last 5 are: %2X\n", last5);
 
 					char rd_char = rd + '0';
 					char rs_char = rs + '0';
 					char rt_char = rt + '0';
 
-					printf("subopcode is: %d\n", subopcode);
-					printf("RD is R%d\n", rd);
-					printf("RS is R%d\n", rs);
-					printf("RT is R%d\n", rt);	
-
-					printf("rd_char is: %c\n", rd_char);
-					printf("rs_char is: %c\n", rs_char);
-					printf("rt_char is: %c\n", rt_char);
-
 					//ADD subopcode = 000
 					if(subopcode == 0)	{
-							printf("this is an ADD\n");
 							char* assembly_chars = (char*) calloc(30, sizeof(char));
 	
 							assembly_chars[0] = 'A';
@@ -88,8 +77,7 @@ int reverse_assemble (row_of_memory* memory)
 					}
 					//MUL subopcode = 001
 					else if (subopcode == 1) {
-							printf("this is an MUL\n");
-								char* assembly_chars = (char*) calloc(30, sizeof(char));
+							char* assembly_chars = (char*) calloc(30, sizeof(char));
 	
 							assembly_chars[0] = 'M';
 							assembly_chars[1] = 'U';
@@ -111,7 +99,6 @@ int reverse_assemble (row_of_memory* memory)
 					}
 					//SUB subopcode = 010
 					else if (subopcode == 2) {
-							printf("this is an SUB\n");
 							char* assembly_chars = (char*) calloc(30, sizeof(char));
 	
 							assembly_chars[0] = 'S';
@@ -134,7 +121,6 @@ int reverse_assemble (row_of_memory* memory)
 					}
 					//DIV subopcode = 011
 					else if (subopcode == 3) {
-							printf("this is an DIV\n");
 							char* assembly_chars = (char*) calloc(30, sizeof(char));
 	
 							assembly_chars[0] = 'D';
@@ -156,7 +142,6 @@ int reverse_assemble (row_of_memory* memory)
 					}
 					//ADD IMM subopcode = 100
 					else if (subopcode >> 2 == 1) {
-							printf("this is an ADD IMM\n");
 							char* assembly_chars = (char*) calloc(30, sizeof(char));
 	
 							assembly_chars[0] = 'A';
@@ -175,8 +160,6 @@ int reverse_assemble (row_of_memory* memory)
 
 							if (last5 < 10) {
 									char last5_char = last5 + '0';
-									printf("last 5 is %d\n", last5);
-									printf("last5_char is %c\n", last5_char);
 
 									assembly_chars[13] = last5_char;
 									assembly_chars[14] = '\0';
@@ -188,12 +171,6 @@ int reverse_assemble (row_of_memory* memory)
 									char l5_first_char = last5_first + '0';
 									char l5_last_char = last5_last + '0';
 
-									printf("last 5 is %d\n", last5);
-									printf("last5_first is %d\n", last5_first);
-									printf("last5_last is %d\n", last5_last);
-									printf("last5_first char is %c\n", l5_first_char);
-									printf("last5_last char is %c\n", l5_last_char);
-
 									assembly_chars[13] = l5_first_char;
 									assembly_chars[14] = l5_last_char;
 									assembly_chars[15] = '\0';
@@ -201,8 +178,6 @@ int reverse_assemble (row_of_memory* memory)
 
 							current->assembly = assembly_chars;
 							//assembly_chars
-
-
 					}		
 					else {printf("The subopcode doesn't match anything!");}
 			}
