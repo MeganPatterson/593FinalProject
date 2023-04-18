@@ -221,7 +221,12 @@ int delete_list (row_of_memory** head){
 	row_of_memory* current = *head; // put head at the address start
 	while (current !=NULL) {  // go through full LL
 		row_of_memory* next = current -> next; //set next before you delete current
-		if (current ->)
+		if (current ->assembly != NULL) {
+			free(current->assembly);
+		}
+		if (current ->label != NULL) {
+			free(current->label);
+		}
 		free(current);
 		current = next; 
 	}
