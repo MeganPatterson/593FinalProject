@@ -218,6 +218,12 @@ void print_list (row_of_memory* head )
 int delete_list (row_of_memory** head){
 	/* delete entire list node by node */
 	/* set the list head pointer to NULL upon deletion */
-
+	row_of_memory* current = *head; // put head at the address start
+	while (current !=NULL) {  // go through full LL
+		row_of_memory* next = current -> next; //set next before you delete current
+		free(current);
+		current = next; 
+	}
+	*head = NULL; // set the list head pointer to NULL upon deletion
 	return 0 ;
 }
