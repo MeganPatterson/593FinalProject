@@ -52,17 +52,18 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 			if (feof(my_obj_file)) {break;}
 			unsigned short int word3 = ((byte1 & 0xff) << 8 | (byte2 & 0xff));
 
+			/*
 			printf("word1: \"0x%X\"\n", word1);
 			printf("word2: \"0x%X\"\n", word2);
 			printf("word3: \"0x%X\"\n", word3);
 			printf("word3: %d\n", word3);
-
+			*/
 			unsigned short int word = 0x00;
 
 			// if code block: corresponds to .CODE directive in assembly
 			// n-word body comprising the instructions
 			if (word1 == 0xCADE) {
-					printf("This is a code section\n");
+					//printf("This is a code section\n");
 					for (int i = 0; i < word3; i++) {
 							byte1 = fgetc(my_obj_file) ;
 							if (feof(my_obj_file)) {break;}
@@ -70,7 +71,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 							if (feof(my_obj_file)) {break;}
 							word = ((byte1 & 0xff) << 8 | (byte2 & 0xff));
 
-							printf("New code instruction: \"0x%X\"\n", word);
+							//printf("New code instruction: \"0x%X\"\n", word);
 
 							add_to_list(memory, word2 + i, word);
 					}
@@ -80,7 +81,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 			// else if data block
 			// n-word body comprising the initial data values. This corresponds to the .DATA directive in assembly.
 			else if (word1 == 0xDADA) {
-					printf("This is a data section\n");
+					//printf("This is a data section\n");
 					for (int i = 0; i < word3; i++) {
 							byte1 = fgetc(my_obj_file) ;
 							if (feof(my_obj_file)) {break;}
@@ -88,7 +89,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 							if (feof(my_obj_file)) {break;}
 							word = ((byte1 & 0xff) << 8 | (byte2 & 0xff));
 							
-							printf("New code instruction: \"0x%X\"\n", word);
+							//printf("New code instruction: \"0x%X\"\n", word);
 
 							// add i to the word 2 in order to increment the address for each row
 							add_to_list(memory, word2 + i, word);
@@ -103,7 +104,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 			else if (word1 == 0xC3B7) {
 
 
-					printf("This is a symbol\n");
+					//printf("This is a symbol\n");
 
 					//initialize binary array
 					//add 1 for the null terminator
@@ -123,7 +124,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 
 					// add the null terminator
 					ASCII_label[word3] = '\0';
-					printf("Label: %s\n", ASCII_label);
+					//printf("Label: %s\n", ASCII_label);
 
     			/* check to see if there is already an entry for this address and update the contents.  no additional steps required in this case */
 					current = search_address (*memory, word2);
@@ -206,7 +207,7 @@ int parse_file (FILE* my_obj_file, row_of_memory** memory) {
 					}
 			}
 			else {
-				printf("Parsed header not one of CADE, DADA, or C3B7\n");
+				//printf("Parsed header not one of CADE, DADA, or C3B7\n");
 				break;
 			}
 
