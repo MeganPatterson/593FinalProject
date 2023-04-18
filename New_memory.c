@@ -10,6 +10,7 @@
 #include "lc4_memory.h"
 #include <stdlib.h>
 
+///////////////NOTES MP: need to test label and assembly for memory leaks and add code to fix them
 
 /*
  * adds a new node to a linked list pointed to by head
