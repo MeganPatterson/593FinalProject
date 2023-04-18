@@ -10,7 +10,6 @@
 #include "lc4_memory.h"
 #include <stdlib.h>
 
-///////////////NOTES MP: need to test label and assembly for memory leaks and add code to fix them
 
 /*
  * adds a new node to a linked list pointed to by head
@@ -222,6 +221,7 @@ int delete_list (row_of_memory** head){
 	row_of_memory* current = *head; // put head at the address start
 	while (current !=NULL) {  // go through full LL
 		row_of_memory* next = current -> next; //set next before you delete current
+		if (current ->)
 		free(current);
 		current = next; 
 	}
