@@ -38,7 +38,7 @@ int main (int argc, char** argv) {
 		return 1;
 	}
 	
-	printf ("argv[1]=\"%s\"\n", argv[1]);
+	//printf ("argv[1]=\"%s\"\n", argv[1]);
 
 //set filename to first argument passed into command line
 //since filename is a 100 character array, need to copy in the command line argv[1] into it.
@@ -51,10 +51,12 @@ for (int i = 0; i < 100; i++) {
 	strcpy(filename, argv[1]);
 
 //check filename
+/*
 for (int i = 0; i < 100; i++) {
 	printf("%c", filename[i]);
 }
 printf("\n");
+*/
 
 	FILE* objFile = open_file(filename);
 	//REMEMBER TO CLOSE OBJFILE!
@@ -83,9 +85,9 @@ printf("\n");
 
 	/* step 6: call function: delete_list() in lc4_memory.c */
 	/*   TODO: call function & check for errors		*/
-
+	delete_list (&memory);
 
 	/* only return 0 if everything works properly */
-
+	print_list(memory);
 	return 0 ;
 }
