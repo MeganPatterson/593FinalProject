@@ -23,14 +23,20 @@ void write_asm_file() {
 
 ///////////////////////////////////////////ATTEMPT 2//////////////////////////////
 
-instruction_FIND* lookup_instruction(unsigned short opcode) {
+lookup_instruction(unsigned short opcode) {
     int num_instructions = sizeof(lc4_I) / sizeof(instruction_FIND);
     for (int i = 0; i < num_instructions; i++) {
         if (opcode == lc4_I[i].opcode) {
-            return &lc4_I[i];
+		char* OPfound = (&lc4_I[i]);
+		FILE *fptr;
+  		fptr = fopen("All_instructions.asm", "w");   // CREATES A FILE TO WRITE TO
+  		fprintf(OPfound);  // WRITES INFORMAITON TO THE FILE
+  		fclose(fptr);
+		
+            return;
         }
     }
-    return NULL; // If the instruction is not found
+    return; // If the instruction is not found
 }
 
 
