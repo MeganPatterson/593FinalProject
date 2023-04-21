@@ -8,7 +8,7 @@
 
 void write_asm_file() {
   FILE *fptr;
-  fptr = fopen("All_instructions.asm", "w");   // CREATES A FILE TO WRITE TODO
+  fptr = fopen("All_instructions.asm", "w");   // CREATES A FILE TO WRITE TO
 
   if (fptr == NULL) {
     printf("Failed to create file\n");
